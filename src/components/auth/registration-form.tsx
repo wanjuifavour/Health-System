@@ -14,8 +14,6 @@ import { registrationFormSchema, RegistrationFormValues } from "@/lib/validation
 import { registerUser } from "@/app/actions/auth/register"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
-// import { UserRole } from "@/lib/auth"
-// import { apiClient } from "@/lib/api-client"
 
 export function DoctorRegistrationForm() {
     const [isSubmitting, setIsSubmitting] = useState(false)

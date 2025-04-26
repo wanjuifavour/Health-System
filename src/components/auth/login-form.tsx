@@ -37,10 +37,9 @@ export function LoginForm() {
         try {
             // Use direct redirection for OAuth providers
             await signIn("google", {
-                callbackUrl: "/",  // Where to redirect after successful authentication
-                redirect: true     // Use redirect flow instead of AJAX
+                callbackUrl: "/",
+                redirect: true
             })
-            // No need for further handling as we're being redirected
         } catch (err) {
             console.error("Google login error:", err)
             setError("An unexpected error occurred with Google login")
