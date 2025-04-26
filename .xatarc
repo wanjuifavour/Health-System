@@ -1,0 +1,6 @@
+{
+  "databaseURL": "https://Wanjui-s-workspace-ff65m2.us-east-1.xata.sh/db/cema-task",
+  "codegen": {
+    "output": "src/lib/xata.ts"
+  }
+}
