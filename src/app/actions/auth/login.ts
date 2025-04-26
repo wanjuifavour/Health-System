@@ -44,6 +44,12 @@ export async function loginUser(formData: FormData): Promise<LoginResult> {
             }
 
             // Verify the password
+            if (!user.password) {
+                return {
+                    success: false,
+                    error: "Invalid email or password",
+                }
+            }
             const isValidPassword = await compare(password, user.password)
             if (!isValidPassword) {
                 return {

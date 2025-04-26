@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 export default async function LoginPage({
     searchParams,
 }: {
-    searchParams: Promise<{ [key: string]: string | string[] | undefined }> | { [key: string]: string | string[] | undefined }
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }> // Updated type
 }) {
     const session = await getServerSession(authOptions)
 
@@ -23,8 +23,8 @@ export default async function LoginPage({
         redirect("/")
     }
 
-    // Handle both Promise and non-Promise cases
-    const params = searchParams instanceof Promise ? await searchParams : searchParams
+    // Await searchParams before accessing it
+    const params = await searchParams
     const registered = params.registered === "true"
 
     return (
