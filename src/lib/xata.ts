@@ -15,7 +15,9 @@ const tables = [
       { name: "role", type: "text", notNull: true, defaultValue: "null" },
       { name: "facilityId", type: "link", link: { table: "Facility" } },
       { name: "image", type: "text" },
-      { name: "password", type: "text", notNull: true, defaultValue: "null" },
+      { name: "oauthProvider", type: "text" },
+      { name: "oauthId", type: "text" },
+      { name: "password", type: "text" },
     ],
     revLinks: [
       { column: "createdBy", table: "Client" },

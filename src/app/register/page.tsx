@@ -1,7 +1,8 @@
 import type { Metadata } from "next"
 import Link from "next/link"
-// import { redirect } from "next/navigation"
-// import { auth } from "@/lib/auth"
+import { redirect } from "next/navigation"
+import { getServerSession } from "next-auth/next"
+import { authOptions } from "@/auth"
 import { DoctorRegistrationForm } from "@/components/auth/registration-form"
 
 export const metadata: Metadata = {
@@ -10,12 +11,11 @@ export const metadata: Metadata = {
 }
 
 export default async function RegisterPage() {
-    // const session = await auth()
+    const session = await getServerSession(authOptions)
 
-    // // If user is already logged in, redirect to dashboard
-    // if (session) {
-    //     redirect("/")
-    // }
+    if (session) {
+        redirect("/")
+    }
 
     return (
         <div className="container flex h-screen w-screen flex-col items-center justify-center">
