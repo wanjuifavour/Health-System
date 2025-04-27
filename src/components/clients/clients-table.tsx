@@ -76,7 +76,7 @@ export function ClientsTable({ initialClients = [] }: ClientsTableProps) {
         }
 
         fetchClients()
-    }, [page, search])
+    }, [page, search, clients.length, initialClients])
 
     const handleViewClient = (id: string) => {
         router.push(`/clients/${id}`)

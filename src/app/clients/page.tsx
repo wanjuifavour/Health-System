@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import { redirect } from "next/navigation"
 import { getServerSession } from "next-auth/next"
+import Link from "next/link"
 import { authOptions } from "@/auth"
 import { DashboardShell } from "@/components/dashboard/dashboard-shell"
 import { DashboardHeader } from "@/components/dashboard/dashboard-header"
@@ -18,7 +19,7 @@ export const metadata: Metadata = {
 export default async function ClientsPage({
     searchParams,
 }: {
-    searchParams?: { search?: string; page?: string }
+    searchParams: Promise<{ search?: string; page?: string; [key: string]: string | string[] | undefined }>
 }) {
     const session = await getServerSession(authOptions)
 
@@ -26,11 +27,13 @@ export default async function ClientsPage({
         redirect("/login")
     }
 
-    const pageParam = searchParams?.page || "1"
-    const searchParam = searchParams?.search || ""
+    // Await searchParams before accessing it
+    const params = await searchParams
+    const pageParam = params.page || "1"
+    const searchParam = params.search || ""
 
-    const page = parseInt(pageParam, 10) || 1
-    const result = await getClients(page, 10, searchParam || undefined)
+    const page = parseInt(pageParam as string, 10) || 1
+    const result = await getClients(page, 10, searchParam ? (searchParam as string) : undefined)
 
     let initialClients = []
     if (result.success && result.data) {
@@ -46,7 +49,7 @@ export default async function ClientsPage({
         <DashboardShell>
             <DashboardHeader heading="Clients" text="Manage your client records.">
                 <Button asChild>
-                    <a href="/clients/new">Register New Client</a>
+                    <Link href="/clients/new">Register New Client</Link>
                 </Button>
             </DashboardHeader>
             <div className="space-y-4">

@@ -1,8 +1,7 @@
-import type { Metadata } from "next"
 import { notFound, redirect } from "next/navigation"
 import { getServerSession } from "next-auth/next"
+import Link from "next/link"
 import { authOptions } from "@/auth"
-import { clientsRepository } from "@/lib/repositories"
 import { DashboardShell } from "@/components/dashboard/dashboard-shell"
 import { DashboardHeader } from "@/components/dashboard/dashboard-header"
 import { Button } from "@/components/ui/button"
@@ -12,35 +11,35 @@ import { getClient } from "@/app/actions/clients/clientActions"
 import type { ClientRecord } from "@/lib/xata"
 import { ClientDeleteButton } from "@/components/clients/client-delete-button"
 
-interface ClientPageProps {
-    params: {
-        id: string
-    }
-}
 
-export async function generateMetadata({ params }: ClientPageProps): Promise<Metadata> {
-    const client = await clientsRepository.getClientById(params.id)
+// export async function generateMetadata({ params }: ClientPageProps): Promise<Metadata> {
+//     const client = await clientsRepository.getClientById(params.id)
 
-    if (!client) {
-        return {
-            title: "Client Not Found",
-        }
-    }
+//     if (!client) {
+//         return {
+//             title: "Client Not Found",
+//         }
+//     }
 
-    return {
-        title: `${client.firstName} ${client.lastName} | Healthcare Information System`,
-        description: `Client profile for ${client.firstName} ${client.lastName}`,
-    }
-}
+//     return {
+//         title: `${client.firstName} ${client.lastName} | Healthcare Information System`,
+//         description: `Client profile for ${client.firstName} ${client.lastName}`,
+//     }
+// }
 
-export default async function ClientPage({ params }: ClientPageProps) {
+export default async function ClientPage({
+    params,
+}: {
+    params: Promise<{ id: string }>
+}) {
+    const resolvedParams = await params
     const session = await getServerSession(authOptions)
 
     if (!session) {
         redirect("/login")
     }
 
-    const result = await getClient(params.id)
+    const result = await getClient(resolvedParams.id)
 
     if (!result.success || !result.data) {
         notFound()
@@ -81,12 +80,12 @@ export default async function ClientPage({ params }: ClientPageProps) {
             >
                 <div className="flex gap-2">
                     <Button variant="outline" asChild>
-                        <a href={`/clients/${client.id}/edit`}>
+                        <Link href={`/clients/${client.id}/edit`}>
                             Edit Profile
-                        </a>
+                        </Link>
                     </Button>
                     <Button asChild>
-                        <a href={`/clients/${client.id}/enroll`}>Enroll in Program</a>
+                        <Link href={`/clients/${client.id}/enroll`}>Enroll in Program</Link>
                     </Button>
                     {canDelete && (
                         <ClientDeleteButton

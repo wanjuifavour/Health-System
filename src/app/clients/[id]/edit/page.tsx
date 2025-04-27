@@ -7,13 +7,12 @@ import { ClientEditForm } from "@/components/clients/client-edit-form"
 import { getClient } from "@/app/actions/clients/clientActions"
 import type { ClientRecord } from "@/lib/xata"
 
-interface ClientEditPageProps {
-    params: {
-        id: string
-    }
-}
-
-export default async function ClientEditPage({ params }: ClientEditPageProps) {
+export default async function ClientEditPage({
+    params,
+}: {
+    params: Promise<{ id: string }>
+}) {
+    const resolvedParams = await params
     const session = await getServerSession(authOptions)
 
     if (!session) {
@@ -21,7 +20,7 @@ export default async function ClientEditPage({ params }: ClientEditPageProps) {
     }
 
     // Use the server action to get client data
-    const result = await getClient(params.id)
+    const result = await getClient(resolvedParams.id)
 
     if (!result.success || !result.data) {
         notFound()
@@ -59,4 +58,4 @@ export default async function ClientEditPage({ params }: ClientEditPageProps) {
             <ClientEditForm client={client} />
         </DashboardShell>
     )
-} 
+}
