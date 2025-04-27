@@ -132,8 +132,6 @@ export async function updateClient(id: string, data: any): Promise<ClientResult>
         console.log("Received update data:", JSON.stringify(data, null, 2));
 
         const cleanedData = { ...data };
-        if (cleanedData.name) delete cleanedData.name;
-        if (cleanedData.relationship) delete cleanedData.relationship;
 
         const validationResult = clientUpdateSchema.safeParse(cleanedData)
         if (!validationResult.success) {
@@ -148,17 +146,6 @@ export async function updateClient(id: string, data: any): Promise<ClientResult>
         const clientData: any = { ...validationResult.data }
         if (clientData.dateOfBirth) {
             clientData.dateOfBirth = new Date(clientData.dateOfBirth).toISOString()
-        }
-
-        if (clientData.emergencyContact) {
-            clientData.emergencyContactName = clientData.emergencyContact.name;
-            clientData.emergencyContactRelationship = clientData.emergencyContact.relationship;
-
-            if (clientData.emergencyContact.phone) {
-                clientData.emergencyContactPhone = String(clientData.emergencyContact.phone);
-            }
-
-            delete clientData.emergencyContact;
         }
 
         console.log("Processed update data:", JSON.stringify(clientData, null, 2));
@@ -218,8 +205,7 @@ export async function createClient(data: any): Promise<ClientResult> {
         console.log("Received client data:", JSON.stringify(data, null, 2));
 
         const cleanedData = { ...data };
-        if (cleanedData.name) delete cleanedData.name;
-        if (cleanedData.relationship) delete cleanedData.relationship;
+        // No need to handle emergency contact data as it's already flat
 
         const validationResult = clientSchema.safeParse(cleanedData)
         if (!validationResult.success) {
@@ -236,18 +222,7 @@ export async function createClient(data: any): Promise<ClientResult> {
             dateOfBirth: new Date(validationResult.data.dateOfBirth).toISOString(),
         }
 
-        if (clientData.emergencyContact) {
-            clientData.emergencyContactName = clientData.emergencyContact.name;
-            clientData.emergencyContactRelationship = clientData.emergencyContact.relationship;
-
-            // Keep the phone as text - just make sure it's a string
-            if (clientData.emergencyContact.phone) {
-                clientData.emergencyContactPhone = String(clientData.emergencyContact.phone);
-            }
-
-            // Remove the nested object as it's not in the schema
-            delete clientData.emergencyContact;
-        }
+        // No need to process emergency contact since it's already flat
 
         console.log("Processed client data:", JSON.stringify(clientData, null, 2));
 

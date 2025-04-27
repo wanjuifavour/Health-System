@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import type { ProgramEnrollment } from "@/types/client"
+import { getEnrollments } from "@/app/actions/enrollments/enrollmentActions"
 
 interface ClientEnrollmentsProps {
     clientId: string
@@ -20,13 +21,12 @@ export function ClientEnrollments({ clientId }: ClientEnrollmentsProps) {
         const fetchEnrollments = async () => {
             setLoading(true)
             try {
-                const response = await fetch(`/api/enrollments?clientId=${clientId}`)
-                const data = await response.json()
+                const result = await getEnrollments(clientId)
 
-                if (data.success) {
-                    setEnrollments(data.data)
+                if (result.success) {
+                    setEnrollments(result.data || [])
                 } else {
-                    setError(data.error || "Failed to fetch enrollments")
+                    setError(result.error || "Failed to fetch enrollments")
                 }
             } catch (error) {
                 console.error("Error fetching enrollments:", error)
@@ -89,7 +89,11 @@ export function ClientEnrollments({ clientId }: ClientEnrollmentsProps) {
                         {enrollments.map((enrollment) => (
                             <div key={enrollment.id} className="flex items-center justify-between border-b pb-4 last:border-0">
                                 <div>
-                                    <div className="font-medium">{enrollment.programId}</div>
+                                    <div className="font-medium">
+                                        {enrollment.programId && typeof enrollment.programId === 'object'
+                                            ? (enrollment.programId as any).name || 'Unknown Program'
+                                            : String(enrollment.programId) || 'Unknown Program'}
+                                    </div>
                                     <div className="text-sm text-muted-foreground">
                                         Enrolled: {new Date(enrollment.enrollmentDate).toLocaleDateString()}
                                     </div>

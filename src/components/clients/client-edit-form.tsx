@@ -54,16 +54,6 @@ export function ClientEditForm({ client }: ClientEditFormProps) {
         setError(null)
 
         try {
-            // Prepare emergency contact data if provided
-            const emergencyContact = data.emergencyContactName
-                ? {
-                    name: data.emergencyContactName,
-                    relationship: data.emergencyContactRelationship || "",
-                    phone: data.emergencyContactPhone || "",
-                }
-                : undefined
-
-            // Prepare client data for server action
             const clientData = {
                 firstName: data.firstName,
                 lastName: data.lastName,
@@ -73,7 +63,9 @@ export function ClientEditForm({ client }: ClientEditFormProps) {
                 phone: data.phone,
                 email: data.email,
                 address: data.address,
-                emergencyContact,
+                emergencyContactName: data.emergencyContactName,
+                emergencyContactRelationship: data.emergencyContactRelationship,
+                emergencyContactPhone: data.emergencyContactPhone,
             }
 
             // Call the server action

@@ -31,7 +31,7 @@ export const clientSchema = z.object({
     address: z.string().optional(),
     emergencyContactName: z.string().optional(),
     emergencyContactRelationship: z.string().optional(),
-    emmergencyContactPhone: z.number().optional(),
+    emergencyContactPhone: z.string().optional(),
 })
 
 export const clientUpdateSchema = z.object({
@@ -50,5 +50,17 @@ export const clientUpdateSchema = z.object({
     address: z.string().optional(),
     emergencyContactName: z.string().optional(),
     emergencyContactRelationship: z.string().optional(),
-    emmergencyContactPhone: z.number().optional(),
+    emergencyContactPhone: z.string().optional(),
 })
+
+export const enrollmentFormSchema = z.object({
+    programId: z.string().min(1, "Program is required"),
+    enrollmentDate: z.string().min(1, "Enrollment date is required"),
+    status: z.enum(["active", "completed", "suspended"], {
+        required_error: "Status is required",
+    }),
+    notes: z.string().optional(),
+    // Dynamic fields will be added based on program requirements
+})
+
+export type EnrollmentFormValues = z.infer<typeof enrollmentFormSchema> & Record<string, any>

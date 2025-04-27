@@ -40,9 +40,9 @@ const tables = [
     columns: [
       { name: "name", type: "text", notNull: true, defaultValue: "null" },
       { name: "description", type: "text" },
-      { name: "code", type: "int", unique: true },
       { name: "active", type: "bool", defaultValue: "true" },
       { name: "requiredFields", type: "multiple" },
+      { name: "code", type: "text" },
     ],
     revLinks: [{ column: "programId", table: "ProgramEnrollment" }],
   },

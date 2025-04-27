@@ -1,5 +1,5 @@
 import { getXataClient } from "./xata"
-import type { UserRecord, ClientRecord } from "./xata"
+import type { UserRecord, ClientRecord, HealthProgramRecord, ProgramEnrollmentRecord } from "./xata"
 
 const xata = getXataClient()
 
@@ -235,6 +235,94 @@ export const clientsRepository = {
 
     async deleteClient(id: string): Promise<void> {
         await xata.db.Client.delete(id)
+    }
+}
+
+export const programsRepository = {
+    async getActivePrograms(): Promise<HealthProgramRecord[]> {
+        return xata.db.HealthProgram.filter({ active: true }).getAll()
+    },
+
+    async getProgramById(id: string): Promise<HealthProgramRecord | null> {
+        return xata.db.HealthProgram.read(id)
+    },
+
+    async createProgram(program: Partial<HealthProgramRecord>): Promise<HealthProgramRecord> {
+        return xata.db.HealthProgram.create(program)
+    },
+
+    async updateProgram(id: string, program: Partial<HealthProgramRecord>): Promise<HealthProgramRecord | null> {
+        return xata.db.HealthProgram.update(id, program)
+    },
+}
+
+export const enrollmentsRepository = {
+    async getClientEnrollments(clientId: string): Promise<ProgramEnrollmentRecord[]> {
+        const enrollments = await xata.db.ProgramEnrollment.filter({
+            "clientId.id": clientId
+        })
+            .select(["*", "programId.*"])
+            .getAll();
+
+        // Convert Date objects to strings for serialization
+        return enrollments.map(enrollment => ({
+            ...enrollment,
+            enrollmentDate: enrollment.enrollmentDate ? enrollment.enrollmentDate.toISOString() : undefined,
+            xata: {
+                createdAt: enrollment.xata.createdAt.toISOString(),
+                updatedAt: enrollment.xata.updatedAt.toISOString(),
+                version: enrollment.xata.version
+            }
+        })) as unknown as ProgramEnrollmentRecord[];
+    },
+
+    async getProgramEnrollments(programId: string, page = 1, pageSize = 10) {
+        const offset = (page - 1) * pageSize;
+        const result = await xata.db.ProgramEnrollment.filter({
+            "programId.id": programId
+        })
+            .select(["*", "clientId.*"])
+            .getPaginated({
+                pagination: {
+                    size: pageSize,
+                    offset,
+                },
+            });
+
+        // Convert Date objects to strings for serialization
+        const serializedResult = {
+            ...result,
+            records: result.records.map(record => ({
+                ...record,
+                enrollmentDate: record.enrollmentDate ? record.enrollmentDate.toISOString() : undefined,
+                xata: {
+                    createdAt: record.xata.createdAt.toISOString(),
+                    updatedAt: record.xata.updatedAt.toISOString(),
+                    version: record.xata.version
+                }
+            }))
+        };
+
+        return serializedResult;
+    },
+
+    async createEnrollment(enrollment: any): Promise<ProgramEnrollmentRecord> {
+        const data = {
+            ...enrollment,
+            clientId: typeof enrollment.clientId === 'string' ? { id: enrollment.clientId } : enrollment.clientId,
+            programId: typeof enrollment.programId === 'string' ? { id: enrollment.programId } : enrollment.programId,
+            createdBy: typeof enrollment.createdBy === 'string' ? { id: enrollment.createdBy } : enrollment.createdBy
+        };
+
+        return xata.db.ProgramEnrollment.create(data) as Promise<ProgramEnrollmentRecord>;
+    },
+
+    async updateEnrollment(id: string, enrollmentData: Partial<ProgramEnrollmentRecord>): Promise<ProgramEnrollmentRecord | null> {
+        return xata.db.ProgramEnrollment.update(id, enrollmentData) as Promise<ProgramEnrollmentRecord | null>;
+    },
+
+    async deleteEnrollment(id: string): Promise<void> {
+        await xata.db.ProgramEnrollment.delete(id);
     }
 }
 

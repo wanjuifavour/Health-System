@@ -44,16 +44,6 @@ export function ClientRegistrationForm() {
         setError(null)
 
         try {
-            // Prepare emergency contact data if provided
-            const emergencyContact = data.emergencyContactName
-                ? {
-                    name: data.emergencyContactName,
-                    relationship: data.emergencyContactRelationship || "",
-                    phone: String(data.emergencyContactPhone || ""),
-                }
-                : undefined
-
-            // Prepare client data for server action
             const clientData = {
                 firstName: data.firstName,
                 lastName: data.lastName,
@@ -63,7 +53,9 @@ export function ClientRegistrationForm() {
                 phone: String(data.phone || ""),
                 email: data.email,
                 address: data.address,
-                emergencyContact,
+                emergencyContactName: data.emergencyContactName,
+                emergencyContactRelationship: data.emergencyContactRelationship,
+                emergencyContactPhone: data.emergencyContactPhone,
             }
 
             // Call the server action instead of using fetch
