@@ -4,7 +4,7 @@
 
 A comprehensive healthcare information management system for tracking clients, programs, and health outcomes. HealthIS enables healthcare providers to manage client information, enroll clients in health programs, and track their progress.
 
-![Dashboard Screenshot](public\dashboard.png)
+![Dashboard Screenshot](public/dashboard.png)
 
 ## 📋 Contents
 
@@ -43,7 +43,7 @@ The system is deployed and available at: [https://health-system-livid.vercel.app
 To test the system, you can use the following credentials:
 
 - Email: `doctor.test@gmail.com`
-- Password: `password123`
+- Password: `Password123`
 
 or you can proceed and create your account.(Please Note that doctors have full system permissions while nurses have limited permissions)
 
@@ -55,7 +55,7 @@ The original challenge required a system that allows healthcare workers to perfo
 
 Healthcare workers can create new health programs (e.g., TB, Malaria, HIV) through the Programs section.
 
-![Program Creation](public\programCreate.png)
+![Program Creation](public/programCreate.png)
 
 Each program can be configured with:
 
@@ -68,7 +68,7 @@ Each program can be configured with:
 
 The system provides a client registration form to capture comprehensive client information:
 
-![Client Registration](public\registerClient.png)
+![Client Registration](public/registerClient.png)
 
 Client details include:
 
@@ -81,7 +81,7 @@ Client details include:
 
 Once registered, clients can be enrolled in one or more health programs:
 
-![Client Enrollment](public\enrollClient.png)
+![Client Enrollment](public/enrollClient.png)
 
 The enrollment process captures:
 
@@ -94,7 +94,7 @@ The enrollment process captures:
 
 The system provides powerful search capabilities to find registered clients:
 
-![Client Search](public\searchClient.png)
+![Client Search](public/searchClient.png)
 
 Search features include:
 
@@ -106,7 +106,7 @@ Search features include:
 
 Healthcare workers can view a client's complete profile, including all programs they are enrolled in:
 
-![Client Profile](public\clientProfile.png)
+![Client Profile](public/clientProfile.png)
 
 The profile displays:
 
@@ -119,7 +119,7 @@ The profile displays:
 
 The system exposes client profiles via a secure API, allowing other healthcare systems to access this information:
 
-![API Access](public\api.png)
+![API Access](public/api.png)
 
 API features include:
 
