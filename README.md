@@ -42,8 +42,10 @@ The system is deployed and available at: [https://health-system-livid.vercel.app
 
 To test the system, you can use the following credentials:
 
-- Email: `doctor.test@.com`
+- Email: `doctor.test@gmail.com`
 - Password: `password123`
+
+or you can proceed and create your account.(Please Note that doctors have full system permissions while nurses have limited permissions)
 
 ## 🎯 How the Solution Addresses the Challenge
 
