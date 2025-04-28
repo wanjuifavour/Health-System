@@ -27,18 +27,18 @@ export function ClientSearch() {
     }
 
     return (
-        <form onSubmit={handleSearch} className="flex w-full items-center space-x-2">
-            <div className="relative flex-1">
+        <form onSubmit={handleSearch} className="flex w-full items-center space-x-2 flex-wrap gap-2 sm:flex-nowrap">
+            <div className="relative flex-1 w-full">
                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
                     type="search"
                     placeholder="Search by name, ID, or contact info..."
-                    className="pl-8"
+                    className="pl-8 w-full"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                 />
             </div>
-            <Button type="submit">Search</Button>
+            <Button type="submit" className="w-full sm:w-auto">Search</Button>
         </form>
     )
 }

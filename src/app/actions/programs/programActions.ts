@@ -17,21 +17,48 @@ const programUpdateSchema = z.object({
     requiredFields: z.array(z.string()).optional(),
 })
 
+// Defining a type for serialized program
+interface SerializedProgram {
+    id: string;
+    name?: string | null;
+    description?: string | null;
+    code?: string | null;
+    active?: boolean | null;
+    requiredFields?: string[] | null;
+    xata?: {
+        createdAt: string | null;
+        updatedAt: string | null;
+        version: number;
+    } | null;
+}
+
 type ProgramResult = {
     success: boolean
-    data?: HealthProgramRecord
+    data?: SerializedProgram
     error?: string
     details?: z.ZodFormattedError<z.infer<typeof programSchema>> | z.ZodFormattedError<z.infer<typeof programUpdateSchema>>
 }
 
 type GetProgramsResult = {
     success: boolean
-    data?: HealthProgramRecord[]
+    data?: SerializedProgram[]
     error?: string
 }
 
 const hasRole = (session: any, roles: string[]) => {
     return session?.user?.role && roles.includes(session.user.role)
+}
+
+// Helper function to serialize program data
+function serializeProgram(program: HealthProgramRecord): SerializedProgram {
+    return {
+        ...program,
+        xata: program.xata ? {
+            createdAt: program.xata.createdAt ? program.xata.createdAt.toISOString() : null,
+            updatedAt: program.xata.updatedAt ? program.xata.updatedAt.toISOString() : null,
+            version: program.xata.version
+        } : null
+    };
 }
 
 export async function getPrograms(activeOnly: boolean = false): Promise<GetProgramsResult> {
@@ -49,7 +76,7 @@ export async function getPrograms(activeOnly: boolean = false): Promise<GetProgr
             programs = await xataClient.db.HealthProgram.getAll()
         }
 
-        const serializedPrograms = JSON.parse(JSON.stringify(programs))
+        const serializedPrograms = programs.map(program => serializeProgram(program));
 
         return { success: true, data: serializedPrograms }
     } catch (error) {
@@ -73,7 +100,10 @@ export async function getProgram(id: string): Promise<ProgramResult> {
             return { success: false, error: "Program not found" }
         }
 
-        return { success: true, data: program }
+        // Serialize the program data to avoid client component issues
+        const serializedProgram = serializeProgram(program);
+
+        return { success: true, data: serializedProgram }
     } catch (error) {
         console.error("Error fetching program:", error)
         return { success: false, error: "Failed to fetch program" }
@@ -105,7 +135,10 @@ export async function createProgram(formData: z.infer<typeof programSchema>): Pr
         const newProgram = await programsRepository.createProgram(validationResult.data)
         revalidatePath('/programs')
 
-        return { success: true, data: newProgram }
+        // Serialize the program data
+        const serializedProgram = serializeProgram(newProgram);
+
+        return { success: true, data: serializedProgram }
     } catch (error) {
         console.error("Error creating program:", error)
         return { success: false, error: "Failed to create program" }
@@ -151,7 +184,10 @@ export async function updateProgram(id: string, formData: z.infer<typeof program
         revalidatePath('/programs')
         revalidatePath(`/programs/${id}`)
 
-        return { success: true, data: updatedProgram }
+        // Serialize the program data
+        const serializedProgram = serializeProgram(updatedProgram);
+
+        return { success: true, data: serializedProgram }
     } catch (error) {
         console.error("Error updating program:", error)
         return { success: false, error: "Failed to update program" }

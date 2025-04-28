@@ -1,35 +1,13 @@
 "use client"
 
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts"
+import type { MonthlyRegistration } from "@/app/actions/dashboard/dashboardActions"
 
-const data = [
-    {
-        name: "Jan",
-        total: 45,
-    },
-    {
-        name: "Feb",
-        total: 62,
-    },
-    {
-        name: "Mar",
-        total: 78,
-    },
-    {
-        name: "Apr",
-        total: 56,
-    },
-    {
-        name: "May",
-        total: 69,
-    },
-    {
-        name: "Jun",
-        total: 85,
-    },
-]
+interface OverviewProps {
+    data: MonthlyRegistration[];
+}
 
-export function Overview() {
+export function Overview({ data }: OverviewProps) {
     return (
         <ResponsiveContainer width="100%" height={350}>
             <BarChart data={data}>

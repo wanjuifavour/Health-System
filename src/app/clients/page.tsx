@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 export default async function ClientsPage({
     searchParams,
 }: {
-    searchParams: Promise<{ search?: string; page?: string; [key: string]: string | string[] | undefined }>
+    searchParams: Promise<{ search?: string; page?: string;[key: string]: string | string[] | undefined }>
 }) {
     const session = await getServerSession(authOptions)
 
@@ -48,11 +48,11 @@ export default async function ClientsPage({
     return (
         <DashboardShell>
             <DashboardHeader heading="Clients" text="Manage your client records.">
-                <Button asChild>
+                <Button asChild className="w-full sm:w-auto">
                     <Link href="/clients/new">Register New Client</Link>
                 </Button>
             </DashboardHeader>
-            <div className="space-y-4">
+            <div className="space-y-4 px-1 md:px-4 w-full max-w-[1400px] mx-auto">
                 <ClientSearch />
                 <ClientsTable initialClients={initialClients} />
                 {/* <DebugClientData /> */}

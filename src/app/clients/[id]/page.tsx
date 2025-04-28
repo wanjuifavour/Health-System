@@ -10,6 +10,7 @@ import { ClientEnrollments } from "@/components/clients/client-enrollments"
 import { getClient } from "@/app/actions/clients/clientActions"
 import type { ClientRecord } from "@/lib/xata"
 import { ClientDeleteButton } from "@/components/clients/client-delete-button"
+import { Pencil, PlusCircle } from "lucide-react"
 
 
 // export async function generateMetadata({ params }: ClientPageProps): Promise<Metadata> {
@@ -78,14 +79,25 @@ export default async function ClientPage({
                 heading={`${client.firstName} ${client.lastName}`}
                 text="Client profile and program enrollments."
             >
-                <div className="flex gap-2">
-                    <Button variant="outline" asChild>
+                <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                    <Button
+                        variant="outline"
+                        asChild
+                        className="w-full sm:w-auto text-blue-600 border-blue-200 hover:text-blue-700 hover:bg-blue-50 hover:border-blue-300 dark:text-blue-400 dark:border-blue-950 dark:hover:border-blue-900 dark:hover:bg-blue-950/30 gap-1"
+                    >
                         <Link href={`/clients/${client.id}/edit`}>
+                            <Pencil className="h-4 w-4" />
                             Edit Profile
                         </Link>
                     </Button>
-                    <Button asChild>
-                        <Link href={`/clients/${client.id}/enroll`}>Enroll in Program</Link>
+                    <Button
+                        asChild
+                        className="w-full sm:w-auto gap-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
+                    >
+                        <Link href={`/clients/${client.id}/enroll`}>
+                            <PlusCircle className="h-4 w-4" />
+                            Enroll in Program
+                        </Link>
                     </Button>
                     {canDelete && (
                         <ClientDeleteButton
@@ -96,7 +108,7 @@ export default async function ClientPage({
                 </div>
             </DashboardHeader>
 
-            <div className="grid gap-6 md:grid-cols-2">
+            <div className="grid gap-6 sm:px-4 md:grid-cols-2 lg:gap-8">
                 <ClientProfile client={client} />
                 <ClientEnrollments clientId={client.id} />
             </div>

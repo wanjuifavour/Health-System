@@ -7,4 +7,9 @@ export interface HealthProgram {
     requiredFields: string[]
     createdAt: Date
     updatedAt: Date
+    xata?: {
+        createdAt: string;
+        updatedAt: string;
+        version: number;
+    }
 }

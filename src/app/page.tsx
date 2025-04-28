@@ -7,7 +7,14 @@ import { Overview } from "@/components/dashboard/overview"
 import { ProgramStats } from "@/components/dashboard/program-stats"
 import { RecentClients } from "@/components/dashboard/recent-clients"
 import { Button } from "@/components/ui/button"
-import { Activity, Users, FileText, BarChart4, Plus } from "lucide-react"
+import { Activity, Users, FileText, BarChart4 } from "lucide-react"
+import Link from "next/link"
+import {
+  getDashboardStats,
+  getMonthlyRegistrations,
+  getProgramDistribution,
+  getRecentClients
+} from "./actions/dashboard/dashboardActions"
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions)
@@ -15,6 +22,19 @@ export default async function DashboardPage() {
   if (!session) {
     redirect("/login")
   }
+
+  // Fetch real data for the dashboard
+  const [stats, monthlyData, programDistribution, recentClients] = await Promise.all([
+    getDashboardStats().catch(() => ({
+      totalClients: 0,
+      activePrograms: 0,
+      newEnrollments: 0,
+      monthlyVisits: 0
+    })),
+    getMonthlyRegistrations().catch(() => []),
+    getProgramDistribution().catch(() => []),
+    getRecentClients(5).catch(() => [])
+  ]);
 
   return (
     <div className="w-full max-w-screen-2xl mx-auto px-4 py-8">
@@ -25,12 +45,6 @@ export default async function DashboardPage() {
           text="Welcome to your healthcare information system dashboard."
           className="animate-fade-in"
         >
-          <a href="/clients/new">
-            <Button className="gap-2 bg-gradient-blue hover:bg-blue-700 transition-all shadow-md hover:shadow-lg">
-              <Plus className="h-4 w-4" />
-              Register New Client
-            </Button>
-          </a>
         </DashboardHeader>
 
         {/* Stats Overview */}
@@ -44,9 +58,9 @@ export default async function DashboardPage() {
               </div>
             </CardHeader>
             <CardContent className="relative z-10">
-              <div className="text-3xl font-bold">1,245</div>
-              <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
-                <span className="text-emerald-500 font-medium">+12%</span> from last month
+              <div className="text-3xl font-bold">{stats.totalClients.toLocaleString()}</div>
+              <p className="text-xs text-muted-foreground mt-1">
+                Registered clients in system
               </p>
             </CardContent>
           </Card>
@@ -59,8 +73,10 @@ export default async function DashboardPage() {
               </div>
             </CardHeader>
             <CardContent className="relative z-10">
-              <div className="text-3xl font-bold">5</div>
-              <p className="text-xs text-muted-foreground mt-1">TB, Malaria, HIV, Diabetes, Hypertension</p>
+              <div className="text-3xl font-bold">{stats.activePrograms}</div>
+              <p className="text-xs text-muted-foreground mt-1">
+                {programDistribution.map(p => p.name).join(", ") || "No active programs"}
+              </p>
             </CardContent>
           </Card>
           <Card className="hover-card-effect border-0 overflow-hidden relative">
@@ -72,9 +88,9 @@ export default async function DashboardPage() {
               </div>
             </CardHeader>
             <CardContent className="relative z-10">
-              <div className="text-3xl font-bold">42</div>
-              <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
-                <span className="text-emerald-500 font-medium">+18%</span> from last month
+              <div className="text-3xl font-bold">{stats.newEnrollments}</div>
+              <p className="text-xs text-muted-foreground mt-1">
+                New enrollments in the last 30 days
               </p>
             </CardContent>
           </Card>
@@ -87,9 +103,9 @@ export default async function DashboardPage() {
               </div>
             </CardHeader>
             <CardContent className="relative z-10">
-              <div className="text-3xl font-bold">325</div>
-              <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
-                <span className="text-emerald-500 font-medium">+5%</span> from last month
+              <div className="text-3xl font-bold">{stats.monthlyVisits}</div>
+              <p className="text-xs text-muted-foreground mt-1">
+                Client visits in the current month
               </p>
             </CardContent>
           </Card>
@@ -103,7 +119,7 @@ export default async function DashboardPage() {
               <CardDescription>Number of new clients registered per month</CardDescription>
             </CardHeader>
             <CardContent className="pt-4 min-h-[350px] flex items-center justify-center">
-              <Overview />
+              <Overview data={monthlyData} />
             </CardContent>
           </Card>
           <Card className="hover-card-effect border border-gray-100 dark:border-gray-800">
@@ -112,7 +128,7 @@ export default async function DashboardPage() {
               <CardDescription>Client distribution across health programs</CardDescription>
             </CardHeader>
             <CardContent className="pt-4 min-h-[350px] flex items-center justify-center">
-              <ProgramStats />
+              <ProgramStats data={programDistribution} />
             </CardContent>
           </Card>
         </div>
@@ -122,14 +138,14 @@ export default async function DashboardPage() {
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center justify-between text-lg font-semibold">
               <span>Recent Clients</span>
-              <Button variant="outline" size="sm" className="text-xs hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                View All
+              <Button variant="outline" size="sm" className="text-xs hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" asChild>
+                <Link href="/clients">View All</Link>
               </Button>
             </CardTitle>
             <CardDescription>Recently registered or updated client records</CardDescription>
           </CardHeader>
           <CardContent className="pt-4">
-            <RecentClients />
+            <RecentClients clients={recentClients} />
           </CardContent>
         </Card>
       </div>

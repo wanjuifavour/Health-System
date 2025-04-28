@@ -14,10 +14,24 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
-import type { HealthProgramRecord } from "@/lib/xata"
 import { enrollmentFormSchema, type EnrollmentFormValues } from "@/lib/validations/client"
 import { createEnrollment } from "@/app/actions/enrollments/enrollmentActions"
 import { getPrograms } from "@/app/actions/programs/programActions"
+
+// Define the SerializedProgram interface to match the API response
+interface SerializedProgram {
+    id: string;
+    name?: string | null;
+    description?: string | null;
+    code?: string | null;
+    active?: boolean | null;
+    requiredFields?: string[] | null;
+    xata?: {
+        createdAt: string | null;
+        updatedAt: string | null;
+        version: number;
+    } | null;
+}
 
 interface EnrollmentFormProps {
     clientId: string
@@ -28,9 +42,9 @@ export function EnrollmentForm({ clientId, clientName }: EnrollmentFormProps) {
     const router = useRouter()
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [error, setError] = useState<string | null>(null)
-    const [programs, setPrograms] = useState<HealthProgramRecord[]>([])
+    const [programs, setPrograms] = useState<SerializedProgram[]>([])
     const [loading, setLoading] = useState(true)
-    const [selectedProgram, setSelectedProgram] = useState<HealthProgramRecord | null>(null)
+    const [selectedProgram, setSelectedProgram] = useState<SerializedProgram | null>(null)
 
     const form = useForm<EnrollmentFormValues>({
         resolver: zodResolver(enrollmentFormSchema),

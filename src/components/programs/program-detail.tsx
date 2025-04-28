@@ -20,11 +20,25 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { deleteProgram } from "@/app/actions/programs/programActions"
-import type { HealthProgramRecord } from "@/lib/xata"
+
+// Define a serialized program interface instead of using HealthProgramRecord
+interface SerializedProgram {
+    id: string;
+    name?: string | null;
+    description?: string | null;
+    code?: string | null;
+    active?: boolean | null;
+    requiredFields?: string[] | null;
+    xata?: {
+        createdAt: string | null;
+        updatedAt: string | null;
+        version: number;
+    } | null;
+}
 
 interface ProgramDetailProps {
-    program: HealthProgramRecord
-    canEdit: boolean
+    program: SerializedProgram;
+    canEdit: boolean;
 }
 
 export function ProgramDetail({ program, canEdit }: ProgramDetailProps) {

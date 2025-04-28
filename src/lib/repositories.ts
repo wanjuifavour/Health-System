@@ -49,7 +49,7 @@ export const clientsRepository = {
                 })
             };
 
-            console.log("Repository getClients result:", JSON.stringify(serializedResult))
+            // console.log("Repository getClients result:", JSON.stringify(serializedResult))
             return serializedResult
         } catch (error) {
             console.error("Repository error in getClients:", error)

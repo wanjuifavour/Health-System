@@ -45,10 +45,25 @@ export default async function ProgramPage({ params }: ProgramPageProps) {
 
     const isAdmin = hasRole(session, ["Admin", "Doctor"])
 
+    // Serialize the program object to plain JSON
+    const serializedProgram = {
+        id: program.id,
+        name: program.name,
+        description: program.description,
+        code: program.code,
+        active: program.active,
+        requiredFields: program.requiredFields,
+        xata: program.xata ? {
+            createdAt: program.xata.createdAt ? program.xata.createdAt.toISOString() : null,
+            updatedAt: program.xata.updatedAt ? program.xata.updatedAt.toISOString() : null,
+            version: program.xata.version
+        } : null
+    }
+
     return (
         <DashboardShell>
             <DashboardHeader heading={program.name || "Program Details"} text="View and manage program details." />
-            <ProgramDetail program={program} canEdit={isAdmin} />
+            <ProgramDetail program={serializedProgram} canEdit={isAdmin} />
         </DashboardShell>
     )
 }

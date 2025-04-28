@@ -1,16 +1,18 @@
 "use client"
 
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip, Legend } from "recharts"
+import type { ProgramDistribution } from "@/app/actions/dashboard/dashboardActions"
 
-const data = [
-    { name: "TB", value: 540, color: "#0ea5e9" },
-    { name: "Malaria", value: 620, color: "#22c55e" },
-    { name: "HIV", value: 210, color: "#f59e0b" },
-    { name: "Diabetes", value: 180, color: "#8b5cf6" },
-    { name: "Hypertension", value: 310, color: "#ec4899" },
-]
+interface ProgramStatsProps {
+    data: ProgramDistribution[];
+}
 
-export function ProgramStats() {
+export function ProgramStats({ data }: ProgramStatsProps) {
+    // Show a message if there's no data
+    if (!data || data.length === 0) {
+        return <div className="flex h-full w-full items-center justify-center text-muted-foreground">No data available</div>
+    }
+
     return (
         <ResponsiveContainer width="100%" height={350}>
             <PieChart>

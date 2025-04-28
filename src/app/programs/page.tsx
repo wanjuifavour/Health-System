@@ -18,7 +18,7 @@ export default async function ProgramsPage() {
     const hasRole = (session: any, roles: string[]) => {
         return session?.user?.role && roles.includes(session.user.role)
     }
-    
+
 
     if (!session) {
         redirect("/login")
@@ -30,11 +30,13 @@ export default async function ProgramsPage() {
         <DashboardShell>
             <DashboardHeader heading="Health Programs" text="Manage your health programs.">
                 {isAdmin &&
-                    <Button asChild>
+                    <Button asChild className="w-full sm:w-auto">
                         <Link href="/programs/new"> Create Program </Link>
                     </Button>}
             </DashboardHeader>
-            <ProgramsTable />
+            <div className="space-y-4 px-1 md:px-4 w-full max-w-[1400px] mx-auto">
+                <ProgramsTable />
+            </div>
         </DashboardShell>
     )
 }
