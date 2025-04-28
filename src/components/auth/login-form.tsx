@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { signIn } from "next-auth/react"
@@ -12,12 +11,10 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { AlertCircle, Loader2 } from "lucide-react"
 import { loginFormSchema, type LoginFormValues } from "@/lib/validations/auth"
-import { loginUser } from "@/app/actions/auth/login"
 import { toast } from "sonner"
 import { Icons } from "@/components/icons"
 
 export function LoginForm() {
-    const router = useRouter()
     const [isLoading, setIsLoading] = useState(false)
     const [isGoogleLoading, setIsGoogleLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
@@ -53,35 +50,27 @@ export function LoginForm() {
         setError(null)
 
         try {
-            const formData = new FormData()
-            Object.entries(data).forEach(([key, value]) => {
-                formData.append(key, value)
+            const response = await signIn("credentials", {
+                email: data.email,
+                password: data.password,
+                redirect: false,
             })
 
-            const result = await loginUser(formData)
-
-            if (!result.success) {
-                if (result.details) {
-                    // Handle validation errors from server
-                    Object.entries(result.details).forEach(([field, errors]) => {
-                        if (Array.isArray(errors)) {
-                            form.setError(field as keyof LoginFormValues, {
-                                type: "server",
-                                message: errors[0],
-                            })
-                        }
-                    })
-                    toast.error("Please fix the errors in the form")
-                } else {
-                    setError(result.error || "Failed to login")
-                    toast.error(result.error || "Failed to login")
-                }
+            if (response?.error) {
+                setError(response.error)
+                toast.error(response.error || "Failed to login")
                 return
             }
 
+            // Successfully signed in
             toast.success("Login successful!")
-            router.push("/")
-            router.refresh()
+
+            // Use a timeout to ensure the toast is shown before redirecting
+            setTimeout(() => {
+                // Use window.location for a full page refresh instead of router.push
+                // This ensures NextAuth session is fully established
+                window.location.href = "/"
+            }, 1000)
         } catch (err) {
             console.error("Login error:", err)
             setError(err instanceof Error ? err.message : "An unexpected error occurred")

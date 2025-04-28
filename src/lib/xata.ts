@@ -100,6 +100,16 @@ const tables = [
       { name: "createdBy", type: "link", link: { table: "User" } },
     ],
   },
+  {
+    name: "ApiKey",
+    columns: [
+      { name: "key", type: "text", notNull: true, defaultValue: "null" },
+      { name: "owner", type: "text" },
+      { name: "lastUsed", type: "datetime" },
+      { name: "expiresAt", type: "datetime" },
+      { name: "isRevoked", type: "bool", defaultValue: "false" },
+    ],
+  },
 ] as const;
 
 export type SchemaTables = typeof tables;
@@ -123,6 +133,9 @@ export type ProgramEnrollmentRecord = ProgramEnrollment & XataRecord;
 export type ClientVisit = InferredTypes["ClientVisit"];
 export type ClientVisitRecord = ClientVisit & XataRecord;
 
+export type ApiKey = InferredTypes["ApiKey"];
+export type ApiKeyRecord = ApiKey & XataRecord;
+
 export type DatabaseSchema = {
   User: UserRecord;
   Facility: FacilityRecord;
@@ -130,6 +143,7 @@ export type DatabaseSchema = {
   Client: ClientRecord;
   ProgramEnrollment: ProgramEnrollmentRecord;
   ClientVisit: ClientVisitRecord;
+  ApiKey: ApiKeyRecord;
 };
 
 const DatabaseClient = buildClient();
